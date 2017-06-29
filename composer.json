@@ -2,7 +2,7 @@
     "name": "librenms/librenms",
     "description": "A fully featured network monitoring system that provides a wealth of features and device support.",
     "type": "project",
-    "keywords": ["network", "monitoring", "snmp", "laravel"],
+    "keywords": ["network", "monitoring", "discovery", "alerting", "billing", "snmp", "distributed"],
     "homepage": "http://www.librenms.org/",
     "license": "GPL-3.0",
     "support": {
@@ -46,8 +46,5 @@
         }
     },
     "scripts": {
-        "pre-update-cmd": "LibreNMS\\ComposerHelper::preUpdate",
-        "post-autoload-dump": "LibreNMS\\ComposerHelper::postAutoloadDump",
-        "commit": "LibreNMS\\ComposerHelper::commit"
     }
 }
