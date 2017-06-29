@@ -42,24 +42,25 @@ $config['db_socket']             = null;
 $config['own_hostname'] = 'localhost';
 
 // Location of executables
-$config['fping']                    = '/usr/bin/fping';
-$config['fping6']                   = 'fping6';
+$config['snmpwalk']       = 'snmpwalk';
+$config['snmpget']        = 'snmpget';
+$config['snmpbulkwalk']   = 'snmpbulkwalk';
+$config['whois']          = 'whois';
+$config['ping']           = 'ping';
+$config['mtr']            = 'mtr';
+$config['nmap']           = 'nmap';
+$config['ipmitool']       = 'ipmitool';
+$config['virsh']          = 'virsh';
+$config['dot']            = 'dot';
+$config['sfdp']           = 'sfdp';
+$config['fping']          = 'fping';
+$config['fping6']         = 'fping6';
 $config['fping_options']['retries'] = 3;
 $config['fping_options']['timeout'] = 500;
 $config['fping_options']['count']   = 3;
 $config['fping_options']['millisec'] = 200;
-$config['snmpwalk']                  = '/usr/bin/snmpwalk';
-$config['snmpget']                   = '/usr/bin/snmpget';
-$config['snmpbulkwalk']              = '/usr/bin/snmpbulkwalk';
-$config['whois']          = '/usr/bin/whois';
-$config['ping']           = '/bin/ping';
-$config['mtr']            = '/usr/bin/mtr';
-$config['nmap']           = '/usr/bin/nmap';
+
 $config['nagios_plugins'] = '/usr/lib/nagios/plugins';
-$config['ipmitool']       = '/usr/bin/ipmitool';
-$config['virsh']          = '/usr/bin/virsh';
-$config['dot']            = '/usr/bin/dot';
-$config['sfdp']           = '/usr/bin/sfdp';
 
 // Memcached - Keep immediate statistics
 $config['memcached']['enable'] = false;
