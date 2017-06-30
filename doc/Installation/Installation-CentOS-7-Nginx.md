@@ -6,9 +6,9 @@ source: Installation/Installation-CentOS-7-Nginx.md
     yum install epel-release
     rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
-    
-    yum install composer mariadb-server mariadb php70w php70w-cli php70w-gd php70w-mysql php70w-snmp php70w-pear php70w-curl php70w-common php70w-fpm nginx net-snmp ImageMagick jwhois nmap mtr rrdtool MySQL-python python-memcached net-snmp-utils cronie php70w-mcrypt fping git
-    
+
+    yum install composer mariadb-server mariadb php71w php71w-cli php71w-gd php71w-mysql php71w-snmp php71w-pear php71w-curl php71w-common php71w-fpm nginx net-snmp ImageMagick jwhois nmap mtr rrdtool MySQL-python python-memcached net-snmp-utils cronie php71w-mcrypt fping git
+
     pear install Net_IPv4-1.3.4
     pear install Net_IPv6-1.2.2b2
 
@@ -21,7 +21,7 @@ source: Installation/Installation-CentOS-7-Nginx.md
 #### Install LibreNMS
 
     cd /opt
-    composer create-project librenms/librenms librenms dev-master --no-dev
+    composer create-project --no-dev --keep-vcs librenms/librenms librenms dev-master
 
 
 ## DB Server ##
@@ -62,13 +62,14 @@ In `/etc/php-fpm.d/www.conf` make these changes:
 
 ```nginx
 ;listen = 127.0.0.1:9000
-listen = /var/run/php-fpm/php7.0-fpm.sock
+listen = /var/run/php-fpm/php7.1-fpm.sock
 
 listen.owner = nginx
 listen.group = nginx
 listen.mode = 0660
 ```
 
+    systemctl enable php-fpm
     systemctl restart php-fpm
 
 ### Configure NGINX
@@ -127,6 +128,7 @@ Edit the text which says `RANDOMSTRINGGOESHERE` and set your own community strin
 
     curl -o /usr/bin/distro https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/distro
     chmod +x /usr/bin/distro
+    systemctl enable snmpd
     systemctl restart snmpd
 
 ### Cron job

@@ -14,7 +14,7 @@ source: Installation/Installation-Ubuntu-1604-Apache.md
 #### Install LibreNMS
 
     cd /opt
-    composer create-project librenms/librenms librenms dev-master --no-dev
+    composer create-project --no-dev --keep-vcs librenms/librenms librenms dev-master
 
 
 ## DB Server ##
