@@ -168,6 +168,7 @@ main () {
             ;;
             post-pull)
                 # List all tasks to do after pull in the order of execution
+                status_run 'Updating Composer packages' 'php scripts/composer_wrapper.php install --no-dev'
                 status_run 'Updating SQL-Schema' 'php includes/sql-schema/update.php'
                 status_run 'Updating submodules' "$DAILY_SCRIPT submodules"
                 status_run 'Cleaning up DB' "$DAILY_SCRIPT cleanup"
