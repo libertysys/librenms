@@ -86,6 +86,12 @@ Add the following config:
 #### SELinux
 
     yum install policycoreutils-python
+    semanage fcontext -a -t httpd_sys_content_t '/opt/librenms/logs(/.*)?'
+    semanage fcontext -a -t httpd_sys_rw_content_t '/opt/librenms/logs(/.*)?'
+    restorecon -RFvv /opt/librenms/logs/
+    semanage fcontext -a -t httpd_sys_content_t '/opt/librenms/rrd(/.*)?'
+    semanage fcontext -a -t httpd_sys_rw_content_t '/opt/librenms/rrd(/.*)?'
+    restorecon -RFvv /opt/librenms/rrd/
     setsebool -P httpd_can_sendmail=1
 
 #### Allow access through firewall
@@ -119,8 +125,9 @@ LibreNMS keeps logs in `/opt/librenms/logs`. Over time these can become large an
 
 ### Set permissions
 
-    chmod g+w /opt/librenms
     chown -R librenms:librenms /opt/librenms
+    setfacl -d -m g::rwx /opt/librenms/rrd /opt/librenms/logs
+    setfacl -R -m g::rwx /opt/librenms/rrd /opt/librenms/logs
 
 ## Web installer ##
 

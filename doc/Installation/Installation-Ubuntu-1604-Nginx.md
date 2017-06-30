@@ -111,8 +111,9 @@ LibreNMS keeps logs in `/opt/librenms/logs`. Over time these can become large an
 
 ### Set permissions
 
-    chmod g+w /opt/librenms
     chown -R librenms:librenms /opt/librenms
+    setfacl -d -m g::rwx /opt/librenms/rrd /opt/librenms/logs
+    setfacl -R -m g::rwx /opt/librenms/rrd /opt/librenms/logs
 
 ## Web installer ##
 
