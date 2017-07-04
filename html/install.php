@@ -488,7 +488,8 @@ if (auth_usermanagement()) {
       <div class="col-md-6">
         <div class="alert alert-success">
             <p>Thank you for installing LibreNMS.</p>
-            <p>It would be great if you would consider contributing to our statistics, you can do this on the <a href="about/">/about/</a> page and check the box under Statistics.</p>
+            <p>Contributing to our <a href="https://stats.librenms.org">statistics</a> greatly assists in development.
+                It would be great if you would contribute by checking the box under Statistics on the <a href="about/">/about/</a>.</p>
             <p><a href="addhost/">Click here to login and add your first device</a>!</p>
         </div>
       </div>
