@@ -7,7 +7,7 @@ source: Installation/Installation-CentOS-7-Nginx.md
     rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
 
-    yum install composer mariadb-server mariadb php71w php71w-cli php71w-gd php71w-mysql php71w-snmp php71w-pear php71w-curl php71w-common php71w-fpm nginx net-snmp ImageMagick jwhois nmap mtr rrdtool MySQL-python python-memcached net-snmp-utils cronie php71w-mcrypt fping git
+    yum install composer mariadb-server mariadb php71w php71w-cli php71w-gd php71w-mysql php71w-snmp php71w-pear php71w-curl php71w-common php71w-fpm php70w-zip nginx net-snmp ImageMagick jwhois nmap mtr rrdtool MySQL-python python-memcached net-snmp-utils cronie php71w-mcrypt fping git
 
     pear install Net_IPv4-1.3.4
     pear install Net_IPv6-1.2.2b2
@@ -185,3 +185,5 @@ Now that you've installed LibreNMS, we'd suggest that you have a read of a few o
 ### Closing
 
 We hope you enjoy using LibreNMS. If you do, it would be great if you would consider opting into the stats system we have, please see [this page](http://docs.librenms.org/General/Callback-Stats-and-Privacy/) on what it is and how to enable it.
+
+If you would like to help make LibreNMS better there are [many ways to help](http://docs.librenms.org/Support/FAQ/#what-can-i-do-to-help). You can also [support our Collective](https://t.libren.ms/donations). 

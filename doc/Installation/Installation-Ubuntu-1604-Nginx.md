@@ -3,7 +3,7 @@ source: Installation/Installation-Ubuntu-1604-Nginx.md
 
 ## Install Required Packages ##
 
-    apt install composer fping git graphviz imagemagick mtr-tiny nginx-full nmap mariadb-server mariadb-client php7.0-cli php7.0-mysql php7.0-gd php7.0-snmp php-pear php7.0-curl php7.0-fpm php-net-ipv4 php-net-ipv6 python-memcache python-mysqldb rrdtool snmp snmpd whois
+    apt install composer fping git graphviz imagemagick mtr-tiny nginx-full nmap mariadb-server mariadb-client php7.0-cli php7.0-mysql php7.0-gd php7.0-snmp php-pear php7.0-curl php7.0-fpm php7.0-mcrypt php7.0-zip php-net-ipv4 php-net-ipv6 python-memcache python-mysqldb rrdtool snmp snmpd whois
 
 
 #### Add librenms user
@@ -101,13 +101,13 @@ Edit the text which says `RANDOMSTRINGGOESHERE` and set your own community strin
 
 ### Cron job
 
-    cp librenms.nonroot.cron /etc/cron.d/librenms`
+    cp /opt/librenms/librenms.nonroot.cron /etc/cron.d/librenms
 
 #### Copy logrotate config
 
 LibreNMS keeps logs in `/opt/librenms/logs`. Over time these can become large and be rotated out.  To rotate out the old logs you can use the provided logrotate config file:
 
-    cp misc/librenms.logrotate /etc/logrotate.d/librenms
+    cp /opt/librenms/misc/librenms.logrotate /etc/logrotate.d/librenms
 
 ### Set permissions
 
@@ -146,3 +146,5 @@ Now that you've installed LibreNMS, we'd suggest that you have a read of a few o
 ### Closing
 
 We hope you enjoy using LibreNMS. If you do, it would be great if you would consider opting into the stats system we have, please see [this page](http://docs.librenms.org/General/Callback-Stats-and-Privacy/) on what it is and how to enable it.
+
+If you would like to help make LibreNMS better there are [many ways to help](http://docs.librenms.org/Support/FAQ/#what-can-i-do-to-help). You can also [support our Collective](https://t.libren.ms/donations). 
