@@ -5,10 +5,9 @@ source: Installation/Installation-CentOS-7-Nginx.md
 
     yum install epel-release
 
-    rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
 
-    yum install composer cronie fping git ImageMagick jwhois mariadb mariadb-server mtr MySQL-python net-snmp net-snmp-utils nginx nmap php70w-zip php71w php71w-cli php71w-common php71w-curl php71w-fpm php71w-gd php71w-mcrypt php71w-mysql php71w-pear php71w-snmp python-memcached rrdtool
+    yum install composer cronie fping git ImageMagick jwhois mariadb mariadb-server mtr MySQL-python net-snmp net-snmp-utils nginx nmap php71w php71w-cli php71w-common php71w-curl php71w-fpm php71w-gd php71w-mcrypt php71w-mysql php71w-pear php71w-snmp php71w-zip python-memcached rrdtool
 
     pear install Net_IPv4-1.3.4
     pear install Net_IPv6-1.2.2b2
@@ -16,7 +15,7 @@ source: Installation/Installation-CentOS-7-Nginx.md
 #### Add librenms user
 
     useradd librenms -d /opt/librenms -M -r
-    usermod -a -G librenms www-data
+    usermod -a -G librenms nginx
 
 #### Install LibreNMS
 
@@ -63,7 +62,14 @@ Ensure date.timezone is set in php.ini to your preferred time zone.  See http://
 
 In `/etc/php-fpm.d/www.conf` make these changes:
 
+    vi /etc/php-fpm.d/www.conf
+
 ```nginx
+;user = apache
+user = nginx
+
+group = apache   ; keep group as apache
+
 ;listen = 127.0.0.1:9000
 listen = /var/run/php-fpm/php7.1-fpm.sock
 
@@ -100,13 +106,17 @@ server {
  location ~ \.php {
   include fastcgi.conf;
   fastcgi_split_path_info ^(.+\.php)(/.+)$;
-  fastcgi_pass unix:/var/run/php-fpm/php7.0-fpm.sock;
+  fastcgi_pass unix:/var/run/php-fpm/php7.1-fpm.sock;
  }
  location ~ /\.ht {
   deny all;
  }
 }
 ```
+
+> NOTE: If this is the only site you are hosting on this server (it should be :)) then you will need to disable the default site.
+Delete the `server` section from `/etc/nginx/nginx.conf`
+
     systemctl enable nginx
     systemctl restart nginx
 
@@ -121,6 +131,7 @@ server {
     semanage fcontext -a -t httpd_sys_rw_content_t '/opt/librenms/rrd(/.*)?'
     restorecon -RFvv /opt/librenms/rrd/
     setsebool -P httpd_can_sendmail=1
+    setsebool -P httpd_execmem 1
 
 #### Allow access through firewall
 
@@ -132,6 +143,7 @@ server {
 #### Configure snmpd
 
     cp /opt/librenms/snmpd.conf.example /etc/snmp/snmpd.conf
+
     vi /etc/snmp/snmpd.conf
 
 Edit the text which says `RANDOMSTRINGGOESHERE` and set your own community string.

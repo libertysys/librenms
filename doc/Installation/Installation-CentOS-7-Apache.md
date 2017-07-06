@@ -5,7 +5,6 @@ source: Installation/Installation-CentOS-7-Apache.md
 
     yum install epel-release
     
-    rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
 
     yum install composer cronie fping git httpd ImageMagick jwhois mariadb mariadb-server mtr MySQL-python net-snmp net-snmp-utils nmap php71w php71w-cli php71w-common php71w-curl php71w-gd php71w-mcrypt php71w-mysql php71w-pear php71w-snmp php71w-zip python-memcached rrdtool
@@ -109,6 +108,7 @@ Add the following config, edit `ServerName` as required:
 #### Configure snmpd
 
     cp /opt/librenms/snmpd.conf.example /etc/snmp/snmpd.conf
+
     vi /etc/snmp/snmpd.conf
 
 Edit the text which says `RANDOMSTRINGGOESHERE` and set your own community string.
