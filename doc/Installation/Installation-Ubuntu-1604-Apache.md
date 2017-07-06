@@ -1,10 +1,10 @@
 source: Installation/Installation-Ubuntu-1604-Apache.md
-> NOTE: These instructions assume you are the root user.  If you are not, prepend `sudo` to the shell commands (the ones that aren't at `mysql>` prompts) or temporarily become a user with root privileges with `sudo -s` or `sudo -i`.
+> NOTE: These instructions assume you are the **root** user.  If you are not, prepend `sudo` to the shell commands (the ones that aren't at `mysql>` prompts) or temporarily become a user with root privileges with `sudo -s` or `sudo -i`.
 
 ## Install Required Packages ##
 
-    apt install apache2 composer fping git graphviz imagemagick libapache2-mod-php7.0 mtr-tiny nmap mariadb-server mariadb-client php7.0-cli php7.0-mysql php7.0-gd php7.0-snmp php-pear php7.0-curl php7.0-mcrypt php7.0-json php7.0-zip php-net-ipv4 php-net-ipv6 python-memcache python-mysqldb rrdtool snmp snmpd whois
-
+    apt install apache2 composer fping git graphviz imagemagick libapache2-mod-php7.0 mariadb-client mariadb-server mtr-tiny nmap php-net-ipv4 php-net-ipv6 php-pear php7.0-cli php7.0-curl php7.0-gd php7.0-json php7.0-mcrypt php7.0-mysql php7.0-snmp php7.0-zip python-memcache python-mysqldb rrdtool snmp snmpd whois
+    
 #### Add librenms user
 
     useradd librenms -d /opt/librenms -M -r
@@ -22,6 +22,7 @@ source: Installation/Installation-Ubuntu-1604-Apache.md
     systemctl restart mysql
     mysql -uroot -p
 
+> NOTE: Please change the 'password' below to something secure.
 ```sql
 CREATE DATABASE librenms CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 CREATE USER 'librenms'@'localhost' IDENTIFIED BY 'password';
@@ -30,11 +31,11 @@ FLUSH PRIVILEGES;
 exit
 ```
 
-    vim /etc/mysql/mariadb.conf.d/50-server.cnf
+    vi /etc/mysql/mariadb.conf.d/50-server.cnf
 
 > NOTE: Whilst we are working on ensuring LibreNMS is compatible with MySQL strict mode, for now, please disable this after mysql is installed.
 
-Within the [mysqld] section please add:
+Within the `[mysqld]` section please add:
 
 ```bash
 innodb_file_per_table=1
@@ -47,7 +48,10 @@ lower_case_table_names=0
 
 ### Configure PHP
 
-In `/etc/php/7.0/apache2/php.ini` and `/etc/php/7.0/cli/php.ini`, ensure date.timezone is set to your preferred time zone.  See http://php.net/manual/en/timezones.php for a list of supported timezones.  Valid examples are: "America/New_York", "Australia/Brisbane", "Etc/UTC".
+Ensure date.timezone is set in php.ini to your preferred time zone.  See http://php.net/manual/en/timezones.php for a list of supported timezones.  Valid examples are: "America/New_York", "Australia/Brisbane", "Etc/UTC".
+
+    vi /etc/php/7.0/apache2/php.ini
+    vi /etc/php/7.0/cli/php.ini
 
     a2enmod php7.0
     a2dismod mpm_event
@@ -56,9 +60,9 @@ In `/etc/php/7.0/apache2/php.ini` and `/etc/php/7.0/cli/php.ini`, ensure date.ti
 
 ### Configure Apache
 
-    vim /etc/apache2/sites-available/librenms.conf
+    vi /etc/apache2/sites-available/librenms.conf
 
-Add the following config:
+Add the following config, edit `ServerName` as required:
 
 ```apache
 <VirtualHost *:80>
@@ -84,7 +88,7 @@ Add the following config:
 #### Configure snmpd
 
     cp /opt/librenms/snmpd.conf.example /etc/snmp/snmpd.conf
-    vim /etc/snmp/snmpd.conf
+    vi /etc/snmp/snmpd.conf
 
 Edit the text which says `RANDOMSTRINGGOESHERE` and set your own community string.
 

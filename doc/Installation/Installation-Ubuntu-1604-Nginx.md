@@ -1,10 +1,9 @@
 source: Installation/Installation-Ubuntu-1604-Nginx.md
-> NOTE: These instructions assume you are the root user.  If you are not, prepend `sudo` to the shell commands (the ones that aren't at `mysql>` prompts) or temporarily become a user with root privileges with `sudo -s` or `sudo -i`.
+> NOTE: These instructions assume you are the **root** user.  If you are not, prepend `sudo` to the shell commands (the ones that aren't at `mysql>` prompts) or temporarily become a user with root privileges with `sudo -s` or `sudo -i`.
 
 ## Install Required Packages ##
 
-    apt install composer fping git graphviz imagemagick mtr-tiny nginx-full nmap mariadb-server mariadb-client php7.0-cli php7.0-mysql php7.0-gd php7.0-snmp php-pear php7.0-curl php7.0-fpm php7.0-mcrypt php7.0-zip php-net-ipv4 php-net-ipv6 python-memcache python-mysqldb rrdtool snmp snmpd whois
-
+    apt install composer fping git graphviz imagemagick mariadb-client mariadb-server mtr-tiny nginx-full nmap php-net-ipv4 php-net-ipv6 php-pear php7.0-cli php7.0-curl php7.0-fpm php7.0-gd php7.0-mcrypt php7.0-mysql php7.0-snmp php7.0-zip python-memcache python-mysqldb rrdtool snmp snmpd whois
 
 #### Add librenms user
 
@@ -23,6 +22,7 @@ source: Installation/Installation-Ubuntu-1604-Nginx.md
     systemctl restart mysql
     mysql -uroot -p
 
+> NOTE: Please change the 'password' below to something secure.
 ```sql
 CREATE DATABASE librenms CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 CREATE USER 'librenms'@'localhost' IDENTIFIED BY 'password';
@@ -35,7 +35,7 @@ exit
 
 > NOTE: Whilst we are working on ensuring LibreNMS is compatible with MySQL strict mode, for now, please disable this after mysql is installed.
 
-Within the [mysqld] section please add:
+Within the `[mysqld]` section please add:
 
 ```bash
 innodb_file_per_table=1
@@ -47,7 +47,10 @@ lower_case_table_names=0
 ## Web Server ##
 
 ### Configure and Start PHP-FPM
-In `/etc/php/7.0/fpm/php.ini` and `/etc/php/7.0/cli/php.ini`, ensure date.timezone is set to your preferred time zone.  See http://php.net/manual/en/timezones.php for a list of supported timezones.  Valid examples are: "America/New_York", "Australia/Brisbane", "Etc/UTC".
+Ensure date.timezone is set in php.ini to your preferred time zone.  See http://php.net/manual/en/timezones.php for a list of supported timezones.  Valid examples are: "America/New_York", "Australia/Brisbane", "Etc/UTC".
+
+    vim /etc/php/7.0/fpm/php.ini
+    vim /etc/php/7.0/cli/php.ini
 
     phpenmod mcrypt
     systemctl restart php7.0-fpm
@@ -56,7 +59,7 @@ In `/etc/php/7.0/fpm/php.ini` and `/etc/php/7.0/cli/php.ini`, ensure date.timezo
 
     vim /etc/nginx/conf.d/librenms.conf
 
-Add the following config:
+Add the following config, edit `server_name` as required:
 
 ```nginx
 server {
