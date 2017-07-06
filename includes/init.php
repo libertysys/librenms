@@ -34,7 +34,11 @@ $config['install_dir'] = $install_dir;
 chdir($install_dir);
 
 # composer autoload
+if (!is_file($install_dir . '/vendor/autoload.php')) {
+    c_echo("%RError: Missing libraries%n, run: %Bcomposer install --no-dev%n\n\n");
+}
 require $install_dir . '/vendor/autoload.php';
+
 if (version_compare(PHP_VERSION, '5.4', '>=')) {
     require_once $install_dir . '/lib/influxdb-php/vendor/autoload.php';
 }
