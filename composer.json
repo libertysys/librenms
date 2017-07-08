@@ -13,7 +13,8 @@
         "irc": "irc://irc.freenode.org/#librenms"
     },
     "config": {
-        "platform": {"php": "5.3.9"}
+        "platform": {"php": "5.3.9"},
+        "optimize-autoloader": true
     },
     "require": {
         "php": ">=5.3.9",
