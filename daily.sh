@@ -122,6 +122,11 @@ main () {
         fi
     fi
 
+    # make sure autoload.php exists before trying to run any php that may require it
+    if [ ! -f "${LIBRENMS_DIR}/vendor/autoload.php" ]; then
+        php "${LIBRENMS_DIR}/scripts/composer_wrapper.php" install --no-dev
+    fi
+
     if [[ -z "$arg" ]]; then
         up=$(php daily.php -f update >&2; echo $?)
         if [[ "$up" == "0" ]]; then
