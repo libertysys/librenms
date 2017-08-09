@@ -7,7 +7,7 @@ source: Installation/Installation-CentOS-7-Nginx.md
 
     rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
 
-    yum install composer cronie fping git ImageMagick jwhois mariadb mariadb-server mtr MySQL-python net-snmp net-snmp-utils nginx nmap php71w php71w-cli php71w-common php71w-curl php71w-fpm php71w-gd php71w-mcrypt php71w-mysql php71w-pear php71w-snmp php71w-zip python-memcached rrdtool
+    yum install composer cronie fping git ImageMagick jwhois mariadb mariadb-server mtr MySQL-python net-snmp net-snmp-utils nginx nmap php71w php71w-cli php71w-common php71w-curl php71w-fpm php71w-gd php71w-mcrypt php71w-mysql php71w-snmp php71w-zip python-memcached rrdtool
 
     pear install Net_IPv4-1.3.4
     pear install Net_IPv6-1.2.2b2

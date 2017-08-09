@@ -3,7 +3,7 @@ source: Installation/Installation-Ubuntu-1604-Apache.md
 
 ## Install Required Packages ##
 
-    apt install apache2 composer fping git graphviz imagemagick libapache2-mod-php7.0 mariadb-client mariadb-server mtr-tiny nmap php-net-ipv4 php-net-ipv6 php-pear php7.0-cli php7.0-curl php7.0-gd php7.0-json php7.0-mcrypt php7.0-mysql php7.0-snmp php7.0-zip python-memcache python-mysqldb rrdtool snmp snmpd whois
+    apt install apache2 composer fping git graphviz imagemagick libapache2-mod-php7.0 mariadb-client mariadb-server mtr-tiny nmap php-net-ipv4 php-net-ipv6 php7.0-cli php7.0-curl php7.0-gd php7.0-json php7.0-mcrypt php7.0-mysql php7.0-snmp php7.0-zip python-memcache python-mysqldb rrdtool snmp snmpd whois
     
 #### Add librenms user
 
