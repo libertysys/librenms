@@ -27,6 +27,13 @@
 $install_dir = realpath(__DIR__ . '/..');
 chdir($install_dir);
 
+// Set up proxy if needed
+$proxy = getenv("HTTP_PROXY") ?: getenv("http_proxy");
+if (!$proxy && $proxy = rtrim(shell_exec('git config --global --get http.proxy'))) {
+    // Use git http.proxy if available
+    putenv("HTTP_PROXY=$proxy");
+}
+
 $exec = false;
 
 $path_exec = shell_exec("which composer 2> /dev/null");
@@ -35,9 +42,6 @@ if (!empty($path_exec)) {
 } elseif (is_file($install_dir . '/composer.phar')) {
     $exec = 'php ' . $install_dir . '/composer.phar';
 } else {
-    // Set up proxy if needed
-    $proxy = getenv("http_proxy") ?: getenv("HTTP_PROXY");
-    var_dump($proxy);
     if ($proxy) {
         $stream_default_opts = array(
             'http' => array(
