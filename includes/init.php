@@ -33,6 +33,8 @@ $install_dir = realpath(__DIR__ . '/..');
 $config['install_dir'] = $install_dir;
 chdir($install_dir);
 
+require_once $install_dir . '/includes/common.php';
+
 # composer autoload
 if (!is_file($install_dir . '/vendor/autoload.php')) {
     c_echo("%RError: Missing dependencies%n, run: %Bcomposer install --no-dev%n\n\n");
@@ -51,7 +53,6 @@ if (!function_exists('module_selected')) {
 }
 
 // function only files
-require_once $install_dir . '/includes/common.php';
 require_once $install_dir . '/includes/dbFacile.php';
 require_once $install_dir . '/includes/rrdtool.inc.php';
 require_once $install_dir . '/includes/influxdb.inc.php';
