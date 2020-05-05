@@ -15,6 +15,7 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         \Illuminate\Auth\Events\Login::class => ['App\Listeners\AuthEventListener@login'],
         \Illuminate\Auth\Events\Logout::class => ['App\Listeners\AuthEventListener@logout'],
+        \App\Events\CreatingDevice::class => [\App\Listeners\ValidateSNMP::class],
         \App\Events\UserCreated::class => [MarkNotificationsRead::class]
     ];
 

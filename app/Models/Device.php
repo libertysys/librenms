@@ -2,20 +2,21 @@
 
 namespace App\Models;
 
+use App\Events\CreatingDevice;
 use DB;
 use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use LibreNMS\DB\Schema;
 use LibreNMS\Exceptions\InvalidIpException;
+use LibreNMS\SNMP;
 use LibreNMS\Util\IP;
 use LibreNMS\Util\IPv4;
 use LibreNMS\Util\IPv6;
-use LibreNMS\Util\Url;
 use LibreNMS\Util\Time;
+use LibreNMS\Util\Url;
 use Permissions;
 
 class Device extends BaseModel
@@ -24,7 +25,38 @@ class Device extends BaseModel
 
     public $timestamps = false;
     protected $primaryKey = 'device_id';
-    protected $fillable = ['hostname', 'ip', 'status', 'status_reason'];
+    protected $fillable = [
+        'hostname',
+        'ip',
+        'transport',
+        'community',
+        'port',
+        'snmpver',
+        'transport',
+        'port_association_mode',
+        'force_add',
+        'status',
+        'status_reason',
+        'snmp_disable',
+        'authlevel',
+        'authname',
+        'authpass',
+        'authalgo',
+        'cryptopass',
+        'cryptoalgo',
+        'sysName',
+        'sysDescr',
+        'sysContact',
+        'hardware',
+        'os'
+    ];
+
+    protected $hidden = [
+        'authname',
+        'authpass',
+        'cryptopass'
+    ];
+
     protected $casts = [
         'last_polled' => 'datetime',
         'status' => 'boolean',
@@ -99,6 +131,15 @@ class Device extends BaseModel
         });
     }
 
+    /**
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        'creating' => CreatingDevice::class
+    ];
+
     // ---- Helper Functions ----
 
     public static function findByHostname($hostname)
@@ -131,13 +172,19 @@ class Device extends BaseModel
         return $overwrite_ip ?: $hostname;
     }
 
+    /**
+     * Find a device by any IP assigned to one of it's interfaces
+     *
+     * @param string $ip IPv4 or IPv6 address
+     * @return Device|null
+     */
     public static function findByIp($ip)
     {
         if (!IP::isValid($ip)) {
             return null;
         }
 
-        $device = static::where('hostname', $ip)->orWhere('ip', inet_pton($ip))->first();
+        $device = static::query()->where('hostname', $ip)->orWhere('ip', inet_pton($ip))->first();
 
         if ($device) {
             return $device;
