@@ -722,7 +722,7 @@ return [
         ],
         'graphs' => [
             'port_speed_zoom' => [
-                'description' => 'Fixed Scale Port Graphs',
+                'description' => 'Fixed scale port graphs',
                 'help' => 'Scale port graphs so the max is always the port speed',
             ]
         ],
