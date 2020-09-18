@@ -19,6 +19,13 @@
         <input class="form-control" name="time_interval" id="time_interval-{{ $id }}" value="{{ $time_interval }}">
     </div>
     <div class="form-group">
+        <label for="pending_filter-{{ $id }}" class="control-label">@lang('Exclude pending alert'):</label>
+        <select class="form-control" name="pending_filter" id="pending_filter-{{ $id }}">
+            <option value="">@lang('No')</option>
+            <option value="0">@lang('Yes')</option>
+        </select>
+    </div>
+    <div class="form-group">
         <label for="hidenavigation-{{ $id }}" class="control-label">@lang('Hide Navigation')</label>
         <input type="checkbox" class="form-control" name="hidenavigation" id="hidenavigation-{{ $id }}" value="{{ $hidenavigation }}" data-size="normal" @if($hidenavigation) checked @endif>
     </div>

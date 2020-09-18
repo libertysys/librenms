@@ -1074,15 +1074,15 @@ function str_i_contains($haystack, $needles)
     return false;
 }
 
-    /**
-     * Get alert_rules sql filter by minimal severity
-     *
-     * @param  string|int $min_severity
-     * @param  string $alert_rules_name
-     * @return string
-     */
+/**
+ * Get alert_rules sql filter by minimal severity
+ *
+ * @param  string|int $min_severity
+ * @param  string $alert_rules_name
+ * @return string
+ */
 
-function get_sql_filter_min_severity($min_severity, $alert_rules_name)
+function get_sql_filter_min_severity($min_severity, $table_name)
 {
     $alert_severities = array(
         // alert_rules.status is enum('ok','warning','critical')
@@ -1099,10 +1099,36 @@ function get_sql_filter_min_severity($min_severity, $alert_rules_name)
         $min_severity_id = $alert_severities[$min_severity];
     }
     if (isset($min_severity_id)) {
-        return " AND `$alert_rules_name`.`severity` " . ($min_severity_id > 3 ? "" : ">") . "= " . ($min_severity_id > 3 ? $min_severity_id - 3 : $min_severity_id);
+        return " AND `$table_name`.`severity` " . ($min_severity_id > 3 ? "" : ">") . "= " . ($min_severity_id > 3 ? $min_severity_id - 3 : $min_severity_id);
     }
     return "";
 }
+
+/**
+ * Get alert_rules sql filter by minimal severity
+ *
+ * @param  string|int $min_severity
+ * @param  string $alert_rules_name
+ * @return string
+ */
+
+function get_sql_filter_alert_rule_pending($pending_filter, $table_name)
+{
+    $alert_pending_filters = array(
+        'no' => 1,
+        'yes' => 0,
+    );
+    if (is_numeric($pending_filter)) {
+        $pending_filter_num = $pending_filter;
+    } elseif (!empty($pending_filter)) {
+        $pending_filter_num = $alert_pending_filters[$pending_filter];
+    }
+    if (isset($pending_filter_num)) {
+        return " AND `$table_name`.`pending` = " . $pending_filter_num;
+    }
+    return "";
+}
+
 
 /**
  * @param $value

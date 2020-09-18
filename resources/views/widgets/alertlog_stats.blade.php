@@ -24,7 +24,8 @@
                 id: "alertlog-stats",
                 device_id: "",
                 min_severity: '{{ $min_severity }}',
-                time_interval: '{{ $time_interval }}'
+                time_interval: '{{ $time_interval }}',
+                pending_filter: '{{ $pending_filter }}',
             };
         },
         url: "ajax_table.php"

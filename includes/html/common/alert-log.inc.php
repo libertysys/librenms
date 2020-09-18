@@ -37,6 +37,11 @@ $alert_severities = array(
     'Warning' => 5
 );
 
+$alert_pendings = array(
+    'No' => '',
+    'Yes' => 0
+);
+
 $common_output[] = '<div class="panel panel-default panel-condensed">
                 <div class="panel-heading">
                     <div class="row">
@@ -70,6 +75,13 @@ if (isset($_POST['min_severity'])) {
 } else {
     $selected_min_severity = '';
     $_POST['min_severity'] = '';
+}
+if (isset($_POST['pending_filter'])) {
+    $selected_pending_filter = '<option value="' . $_POST['pending_filter'] . '" selected="selected">';
+    $selected_pending_filter .= array_search((int)$_POST['pending_filter'], $alert_pendings) . '</option>';
+} else {
+    $selected_pending_filter = '';
+    $_POST['pending_filter'] = '';
 }
 
 $common_output[] = '
@@ -141,6 +153,16 @@ $common_output[] = '<div class="form-group"> \
                <option value="1">Ok, warning and critical</option> \
                </select> \
                </div> \
+               <div class="form-group"> \
+               <label> \
+               <strong>&nbsp;Exclude pending&nbsp;</strong> \
+               </label> \
+               <select name="pending_filter" id="pending_filter" class="form-control input-sm"> \
+                ' . $selected_pending_filter. ' \
+               <option value>No</option> \
+               <option value="0">Yes</option> \
+               </select> \
+               </div> \
                <button type="submit" class="btn btn-default input-sm">Filter</button> \
                </form></span></div> \
                <div class="col-sm-4 actionBar"><p class="{{css.search}}"></p><p class="{{css.actions}}"></p></div></div></div>\'
@@ -150,7 +172,8 @@ $common_output[] = '<div class="form-group"> \
                 id: "alertlog",
                 device_id: \'' . htmlspecialchars($_POST['device_id']). '\',
                 state: \'' . htmlspecialchars($_POST['state']). '\',
-                min_severity: \'' . htmlspecialchars($_POST['min_severity']). '\'
+                min_severity: \'' . htmlspecialchars($_POST['min_severity']). '\',
+                pending_filter: \'' . htmlspecialchars($_POST['pending_filter']). '\'
             };
         },
         url: "ajax_table.php"

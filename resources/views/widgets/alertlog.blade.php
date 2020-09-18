@@ -27,6 +27,7 @@
                 device_id: "",
                 state: '{{ $state }}',
                 min_severity: '{{ $min_severity }}',
+                pending_filter: '{{ $pending_filter }}',
             };
         },
         url: "ajax_table.php"
