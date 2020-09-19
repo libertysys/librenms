@@ -35,6 +35,48 @@ if (Auth::user()->hasGlobalAdmin()) {
                                 <input type='text' id='name' name='name' class='form-control validation' maxlength='200' required>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label for="timerange" class="col-sm-3 col-md-2 control-label">Time range <strong class="text-danger">*</strong>: </label>
+                            <div class="col-sm-8">
+                                <input type="checkbox" id="timerange" name="timerange" data-on-text="Yes" data-off-text="No" onchange="timerange_switch();" value=0 />
+                            </div>
+                        </div>
+                        <div id="timerangegroup" style="display:none;">
+                            <div class="form-group">
+                                <label for="start_hr" class="col-sm-3 col-md-2 control-label">Start time <exp>*</exp>: </label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control date" id="start_timerange_hr" name="start_timerange_hr" value="" data-date-format="HH:mm">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="end_hr" class="col-sm-3 col-md-2 control-label">End time <exp>*</exp>: </label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control date" id="end_timerange_hr" name="end_timerange_hr" value="" data-date-format="HH:mm">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="timerange_day" class="col-sm-3 col-md-2 control-label">Only on day: </label>
+                                <div class="col-sm-8">
+                                    <div style="float: left;"><label><input type="checkbox" style="width: 20px;" class="form-control" id="timerange_day" name="timerange_day[]" value="1" />Mo</label></div>
+                                    <div style="float: left;padding-left: 20px;"><label><input type="checkbox" style="width: 20px;" class="form-control" id="timerange_day" name="timerange_day[]" value="2" />Tu</label></div>
+                                    <div style="float: left;padding-left: 20px;"><label><input type="checkbox" style="width: 20px;" class="form-control" id="timerange_day" name="timerange_day[]" value="3" />We</label></div>
+                                    <div style="float: left;padding-left: 20px;"><label><input type="checkbox" style="width: 20px;" class="form-control" id="timerange_day" name="timerange_day[]" value="4" />Th</label></div>
+                                    <div style="float: left;padding-left: 20px;"><label><input type="checkbox" style="width: 20px;" class="form-control" id="timerange_day" name="timerange_day[]" value="5" />Fr</label></div>
+                                    <div style="float: left;padding-left: 20px;"><label><input type="checkbox" style="width: 20px;" class="form-control" id="timerange_day" name="timerange_day[]" value="6" />Sa</label></div>
+                                    <div style="float: left;padding-left: 20px;"><label><input type="checkbox" style="width: 20px;" class="form-control" id="timerange_day" name="timerange_day[]" value="0" />Su</label></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-inline">
+                             <label for='maps' class='col-sm-3 col-md-2 control-label'>Match devices, groups and locations list <exp>*</exp>: </label>
+                                <div class="col-sm-7" style="width: 56%;">
+                                <select id="maps" name="maps[]" class="form-control" multiple="multiple"></select>
+                            </div>
+                            <div>
+                                <label for='invert_map' class='col-md-1' style="width: 14.1333%;" text-align="left" title="If ON, alert rule check will run on all devices except the selected devices and groups.">All devices except in list: </label>
+                                <input type='checkbox' name='invert_map' id='invert_map'>
+                            </div>
+                        </div>
                         <div class="form-group" title="The type of transport.">
                             <label for='transport-choice' class='col-sm-3 col-md-2 control-label'>Transport type: </label>
                             <div class="col-sm-3">
@@ -205,6 +247,7 @@ if (Auth::user()->hasGlobalAdmin()) {
                 $(".transport").hide();
                 $("#" + $("#transport-choice").val()).show().find("input:text").val("");
                 $("#is_default").bootstrapSwitch('state', false);
+                $("#timerange").bootstrapSwitch('state', false);
                 
                 // Turn on all switches in form
                 var switches = <?php echo json_encode($switches);?>;
@@ -221,6 +264,9 @@ if (Auth::user()->hasGlobalAdmin()) {
             $("#name").val(transport.name);
             $("#transport-choice").val(form_id);
             $("#is_default").bootstrapSwitch('state', transport.is_default);
+            $("#timerange").bootstrapSwitch('state', transport.timerange);
+            $("#start_timerange_hr").val(transport.start_timerange_hr);
+            $("#end_timerange_hr").val(transport.end_timerange_hr);
             $(".transport").hide();
             transport_form.show().find("input:text").val("");
              
@@ -233,6 +279,41 @@ if (Auth::user()->hasGlobalAdmin()) {
                     $field.val(config.value);
                 }
             });
+            var recdayupd = transport.day;
+            if (recdayupd){
+                var arrayrecdayupd = recdayupd.split(',');
+                $.each(arrayrecdayupd, function(indexcheckedday, checkedday){
+                    $("input[name='timerange_day[]'][value="+checkedday+"]").prop('checked', true);
+                });
+            }else{
+                $('#timerange_day').prop('checked', false);
+            }
+            if (transport.invert_map == 1) {
+                $("#invert_map").bootstrapSwitch('state', true);
+            } else {
+                $("#invert_map").bootstrapSwitch('state', false);
+            }
+            var $maps = $('#maps');
+            $maps.empty();
+            $maps.val(null).trigger('change'); // clear
+            if (transport.maps == null) {
+                setTransportDevice()
+            } else {
+                $.each(transport.maps, function(index, value) {
+                    var option = new Option(value.text, value.id, true, true);
+                    $maps.append(option).trigger('change')
+                });
+            }
+        }
+
+        function setTransportDevice() {
+            // pre-populate device in the maps if this is a per-device rule
+            var device_id = $('#device_id').val();
+            if (device_id > 0) {
+                var device_name = $('#device_name').val();
+                var option = new Option(device_name, device_id, true, true);
+                $('#maps').append(option).trigger('change')
+            }
         }
 
         $(".btn-oauth").click(function (e) {
@@ -273,12 +354,21 @@ if (Auth::user()->hasGlobalAdmin()) {
         });
 
         // Scripts related to deleting an alert transport
-
         // Populate transport id value
         $("#delete-alert-transport").on("show.bs.modal", function(event) {
             transport_id = $(event.relatedTarget).data("transport_id");
             $("#delete_transport_id").val(transport_id);
         });
+
+        function timerange_switch() {
+            if (document.getElementById("timerange").checked){
+                $('#timerangegroup').show();
+                $('#timerange').val(1);
+            }else{
+                $('#timerangegroup').hide();
+                $('#timerange').val(0);
+            }
+        }
 
         // Delete the alert transport
         $("#remove-alert-transport").click('', function(event) {
@@ -303,7 +393,50 @@ if (Auth::user()->hasGlobalAdmin()) {
                 }
             });
         });
+        $("#maps").select2({
+            width: '100%',
+            placeholder: "Devices, Groups or Locations",
+            ajax: {
+                url: 'ajax_list.php',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        type: 'devices_groups_locations',
+                        search: params.term
+                    };
+                }
+            }
+        });
 
+        $(function () {
+            $("#start_timerange_hr").datetimepicker({
+                icons: {
+                    time: 'fa fa-clock-o',
+                    date: 'fa fa-calendar',
+                    up: 'fa fa-chevron-up',
+                    down: 'fa fa-chevron-down',
+                    previous: 'fa fa-chevron-left',
+                    next: 'fa fa-chevron-right',
+                    today: 'fa fa-calendar-check-o',
+                    clear: 'fa fa-trash-o',
+                    close: 'fa fa-close'
+                }
+            });
+            $("#end_timerange_hr").datetimepicker({
+                icons: {
+                    time: 'fa fa-clock-o',
+                    date: 'fa fa-calendar',
+                    up: 'fa fa-chevron-up',
+                    down: 'fa fa-chevron-down',
+                    previous: 'fa fa-chevron-left',
+                    next: 'fa fa-chevron-right',
+                    today: 'fa fa-calendar-check-o',
+                    clear: 'fa fa-trash-o',
+                    close: 'fa fa-close'
+                }
+            });
+        });
+    $("[name='timerange']").bootstrapSwitch();
     </script>
 
     <?php

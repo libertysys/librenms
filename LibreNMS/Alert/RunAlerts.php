@@ -499,10 +499,10 @@ class RunAlerts
         $type  = new Template;
 
         // If alert transport mapping exists, override the default transports
-        $transport_maps = AlertUtil::getAlertTransports($obj['alert_id']);
+        $transport_maps = AlertUtil::getAlertTransports($obj['alert_id'], $obj['device_id']);
 
         if (!$transport_maps) {
-            $transport_maps = AlertUtil::getDefaultAlertTransports();
+            $transport_maps = AlertUtil::getDefaultAlertTransports($obj['device_id']);
         }
 
         // alerting for default contacts, etc
@@ -539,7 +539,7 @@ class RunAlerts
         }
 
         if (count($transport_maps) === 0) {
-            echo 'No configured transports';
+            echo 'No matched transports';
         }
     }
 
