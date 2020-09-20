@@ -31,6 +31,7 @@ use Date;
 use DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use LibreNMS\Config;
 
 class AlertSchedule extends Model
 {
@@ -167,31 +168,38 @@ class AlertSchedule extends Model
     {
         return $query->where(function ($query) {
             $now = CarbonImmutable::now('UTC');
+            $local_now = CarbonImmutable::now(config('app.timezone'));
+            $time_now = [$now, $local_now];
             $query->where('start', '<=', $now)
                 ->where('end', '>=', $now)
-                ->where(function ($query) use ($now) {
+                ->where(function ($query) use ($time_now) {
                     $query->where('recurring', 0) // Non recurring simply between start and end
-                    ->orWhere(function ($query) use ($now) {
+                    ->orWhere(function ($query) use ($time_now) {
                         $query->where('recurring', 1)
                             // Check the time is after the start date and before the end date, or end date is not set
-                            ->where(function ($query) use ($now) {
-                                $query->where(function ($query) use ($now) {
+                            ->where(function ($query) use ($time_now) {
+                                $query->where(function ($query) use ($time_now) {
                                     // normal, inside one day
                                     $query->whereTime('start', '<', DB::raw("time(`end`)"))
-                                        ->whereTime('start', '<=', $now->toTimeString())
-                                        ->whereTime('end', '>', $now->toTimeString());
-                                })->orWhere(function ($query) use ($now) {
+                                        ->whereTime('start', '<=', $time_now[0]->toTimeString())
+                                        ->whereTime('end', '>', $time_now[0]->toTimeString());
+                                })->orWhere(function ($query) use ($time_now) {
                                     // outside, spans days
                                     $query->whereTime('start', '>', DB::raw("time(`end`)"))
-                                        ->where(function ($query) use ($now) {
-                                            $query->whereTime('end', '<=', $now->toTimeString())
-                                                ->orWhereTime('start', '>', $now->toTimeString());
+                                        ->where(function ($query) use ($time_now) {
+                                            $query->where(function ($query) use ($time_now) {
+                                                $query->whereTime('start', '<=', $time_now[0]->toTimeString())
+                                                    ->whereTime(DB::raw("time(time(`end`) + 240000)"), '>', $time_now[0]->toTimeString());
+                                            })->orWhere(function ($query) use ($time_now) {
+                                                $query->whereTime('start', '<=', DB::raw("time(time(\"" . $time_now[0]->toTimeString(). "\") + 240000)"))
+                                                    ->whereTime(DB::raw("time(time(`end`) + 240000)"), '>', DB::raw("time(time(\"" . $time_now[0]->toTimeString() . "\") + 240000)"));
+                                            });
                                         });
                                 });
                             })
                             // Check we are on the correct day of the week
-                            ->where(function ($query) use ($now) {
-                                $query->where('recurring_day', 'like', $now->format('%N%'))
+                            ->where(function ($query) use ($time_now) {
+                                $query->where('recurring_day', 'like', $time_now[1]->format('%N%'))
                                     ->orWhereNull('recurring_day');
                             });
                     });
