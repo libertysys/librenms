@@ -920,7 +920,7 @@ function include_dir($dir, $regex = '')
 
 /**
  * Check if port is valid to poll.
- * Settings: empty_ifdescr, good_if, bad_if, bad_if_regexp, bad_ifname_regexp, bad_ifalias_regexp, bad_iftype, bad_ifoperstatus
+ * Settings: empty_ifdescr, good_if, good_if_regexp in conjection with if_filter_mode = whitelist, bad_if, bad_if_regexp, bad_ifname_regexp, bad_ifalias_regexp, bad_iftype, bad_ifoperstatus
  *
  * @param array $port
  * @param array $device
@@ -951,8 +951,23 @@ function is_port_valid($port, $device)
     $ifType = $port['ifType'];
     $ifOperStatus = $port['ifOperStatus'];
 
+    // Interface filtering will default to blacklist unless specified as whitelist on a per os basis.
+    $if_filter_mode = Config::getOsSetting($device['os'], 'if_filter_mode', 'blacklist');
+
     if (str_i_contains($ifDescr, Config::getOsSetting($device['os'], 'good_if', Config::get('good_if')))) {
         return true;
+    }
+
+    // If if_filter_mode is set to whitelist, loop through good_if_regexp and allow based on ifDescr.
+    if ($if_filter_mode == 'whitelist') {
+        foreach (Config::getCombined($device['os'], 'good_if_regexp') as $gir) {
+            if (preg_match($gir . 'i', $ifDescr)) {
+                d_echo("Allowed by whitelist on ifDescr: $ifDescr (matched: $gir)\n");
+
+                return true;
+            }
+        }
+        d_echo("Ignored by whitelist, ifDescr: $ifDescr (no match in whitelist)\n");
     }
 
     foreach (Config::getCombined($device['os'], 'bad_if') as $bi) {
