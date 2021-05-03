@@ -131,8 +131,7 @@ class QueueManager:
         )
 
     def apply_config(self):
-        for thread in self._threads:
-            info(thread.name)
+        self.spawn_workers()
 
     def start(self):
         """
@@ -145,23 +144,43 @@ class QueueManager:
 
     def spawn_workers(self):
         workers = self.get_poller_config().workers
-        groups = (
-            self.config.group
-            if hasattr(self.config.group, "__iter__")
-            else [self.config.group]
-        )
+        current_workers = len(self._threads)
         if self.uses_groups:
-            group_workers = max(int(workers / len(groups)), 1)
-            for group in groups:
-                for i in range(group_workers):
-                    self.spawn_worker(self.type.title(), group, i + 1)
+            groups = (
+                self.config.group
+                if hasattr(self.config.group, "__iter__")
+                else [self.config.group]
+            )
+            workers = max(workers, len(groups))  # at least one worker per group
+
+            if current_workers < workers:
+                # evenly distributed among groups, but don't exceed target workers, minimum 1 per group
+                sequence = groups * int((workers / len(group)) + 1)
+
+                # start with the last group
+                if current_workers > 0:
+                    last_group = self._threads[-1]
+
+
+                i = current_workers
+                while i < workers:
+                    for group in groups:
+                        self.spawn_worker(self.type.title(), group, i + 1)
+                        i += 1
+                        if i >= workers:
+                            break
 
                 debug(
-                    "Started {} {} threads for group {}".format(
-                        group_workers, self.type, group
+                    "Started {} {} threads for group {}, total {}".format(
+                        group_workers - current_workers, self.type, group, group_workers
                     )
                 )
-        else:
+            elif current_workers > workers:
+                # need to stop extra workers, since we started them by alternating, just remove the newest ones
+                for thread in self._threads[workers:]:
+                    thread.stop()
+        elif current_workers < 1:
+            # if not spawned for single worker queue, spawn
             self.spawn_worker(self.type.title())
 
     def spawn_worker(self, type, group=0, id=0):

@@ -817,6 +817,7 @@ class Service:
         info("Counting up time spent polling")
 
         try:
+            # fetch new config settings from the DB
             self.apply_config()
 
             # Report on the poller instance as a whole
