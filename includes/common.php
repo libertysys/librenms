@@ -16,6 +16,7 @@
  * the source code distribution for details.
  */
 
+use Illuminate\Http\Client\ConnectionException;
 use LibreNMS\Config;
 use LibreNMS\Enum\Alert;
 use LibreNMS\Exceptions\InvalidIpException;
@@ -638,15 +639,15 @@ function version_info($remote = false)
     ];
     if (Git::repoPresent() && Git::binaryExists()) {
         if ($remote === true && Config::get('update_channel') == 'master') {
-            $api = curl_init();
-            set_curl_proxy($api);
-            curl_setopt($api, CURLOPT_USERAGENT, 'LibreNMS');
-            curl_setopt($api, CURLOPT_URL, Config::get('github_api') . 'commits/master');
-            curl_setopt($api, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($api, CURLOPT_TIMEOUT, 5);
-            curl_setopt($api, CURLOPT_TIMEOUT_MS, 5000);
-            curl_setopt($api, CURLOPT_CONNECTTIMEOUT, 5);
-            $output['github'] = json_decode(curl_exec($api), true);
+            try {
+                $response = Http::timeout(10)
+                    ->withHeaders(['User-Agent' => 'LibreNMS'])
+                    ->withOptions(['proxy' => get_proxy()])
+                    ->get(Config::get('github_api') . 'commits/master');
+                $output['github'] = $response->json();
+            } catch (ConnectionException $e) {
+                $output['github'] = []; // failed to fetch
+            }
         }
         [$local_sha, $local_date] = explode('|', rtrim(`git show --pretty='%H|%ct' -s HEAD`));
         $output['local_sha'] = $local_sha;
