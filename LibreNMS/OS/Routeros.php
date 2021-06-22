@@ -317,6 +317,7 @@ class Routeros extends OS implements
                 null
             ); // mtxrLTEModemSignalRSRQ
         }
+
         return $sensors;
     }
 
@@ -343,6 +344,7 @@ class Routeros extends OS implements
                 null
             ); // mtxrLTEModemSignalRSRP
         }
+
         return $sensors;
     }
 
@@ -369,6 +371,7 @@ class Routeros extends OS implements
                 null
             ); // mtxrLTEModemSignalSINR
         }
+
         return $sensors;
     }
 
